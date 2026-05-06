@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">TamagotchiPig</string>
+    <string name="happiness">happiness</string>
+    <string name="hunger">hunger</string>
+    <string name="energy">energy</string>
+    <string name="feed">Feed</string>
+    <string name="sleep">Sleep</string>
+    <string name="play">Play</string>
+</resources>
