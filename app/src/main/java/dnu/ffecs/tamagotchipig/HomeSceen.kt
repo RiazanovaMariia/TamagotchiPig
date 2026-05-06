@@ -129,10 +129,9 @@ fun HomeScreen(viewModel: PetViewModel,
 
                 Spacer(modifier = Modifier.height(100.dp))
 
-                val imageName = if (pet.isSleeping) {
-                    "pig_sleep"
-                } else {
-                    "pig"
+                val imageName = when {
+                    pet.isSleeping -> "${pet.petType}_sleep"
+                    else -> pet.petType
                 }
 
                 val context = LocalContext.current
@@ -164,7 +163,7 @@ fun HomeScreen(viewModel: PetViewModel,
                     horizontalArrangement = Arrangement.SpaceEvenly){
 
                     Button(onClick = {showFoodDialog = true},
-                        enabled = !isDead||pet.isSleeping,
+                        enabled = !isDead && !pet.isSleeping,
                         modifier = Modifier.width(110.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = ButtonColor,
@@ -194,7 +193,7 @@ fun HomeScreen(viewModel: PetViewModel,
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Button(onClick = {showGameDialog = true},
-                        enabled = !isDead||pet.isSleeping,
+                        enabled = !isDead && !pet.isSleeping,
                         modifier = Modifier.width(110.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = ButtonColor,

@@ -178,6 +178,13 @@ class PetViewModel(
             it.copy(isSleeping = !it.isSleeping)
         }
     }
+
+    fun setPetType(type: String) {
+        updateState {
+            it.copy(petType = type)
+        }
+    }
+
 }
 
 class PetViewModelFactory(

@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -257,7 +261,67 @@ fun FoodDialog(
 fun SettingsContent(pet: Pet,viewModel: PetViewModel,gardenViewModel: GardenViewModel){
     var showHelp by remember { mutableStateOf(false) }
     var resetDialog by remember { mutableStateOf(false) }
+
+    var expanded by remember { mutableStateOf(false) }
+    var selectedPet by remember { mutableStateOf(pet.petType) }
+
     Column (horizontalAlignment = Alignment.CenterHorizontally){
+
+        Text("Select your pet")
+
+        Box(modifier = Modifier.fillMaxWidth()) {
+
+            OutlinedButton(
+                onClick = { expanded = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Pet: $selectedPet")
+                Spacer(modifier = Modifier.weight(1f))
+                Text("▼")
+            }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+                DropdownMenuItem(
+                    text = { Text("pig") },
+                    onClick = {
+                        selectedPet = "pig"
+                        viewModel.setPetType("pig")
+                        expanded = false
+                    }
+                )
+
+                DropdownMenuItem(
+                    text = { Text("cow") },
+                    onClick = {
+                        selectedPet = "cow"
+                        viewModel.setPetType("cow")
+                        expanded = false
+                    }
+                )
+
+                DropdownMenuItem(
+                    text = { Text("goose") },
+                    onClick = {
+                        selectedPet = "goose"
+                        viewModel.setPetType("goose")
+                        expanded = false
+                    }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Button(onClick = {showHelp=true}, modifier = Modifier.fillMaxWidth()){
+            Text("Help me!")
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
 
         Button(
             onClick = {
@@ -266,12 +330,6 @@ fun SettingsContent(pet: Pet,viewModel: PetViewModel,gardenViewModel: GardenView
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Reset your progress")
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(onClick = {showHelp=true}, modifier = Modifier.fillMaxWidth()){
-            Text("Help me!")
         }
 
         if(resetDialog) {
