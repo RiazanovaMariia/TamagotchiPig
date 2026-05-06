@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -128,8 +129,30 @@ fun HomeScreen(viewModel: PetViewModel,
 
                 Spacer(modifier = Modifier.height(100.dp))
 
+                val imageName = if (pet.isSleeping) {
+                    "pig_sleep"
+                } else {
+                    "pig"
+                }
+
+                val context = LocalContext.current
+
+                val imageResId = context.resources.getIdentifier(
+                    imageName,
+                    "drawable",
+                    context.packageName
+                )
+
+                if (imageResId == 0) {
+                    Image(
+                        painter = painterResource(id = R.drawable.pig),
+                        contentDescription = "Pet",
+                        modifier = Modifier.size(300.dp)
+                    )
+                }
+
                 Image(
-                    painter = painterResource(id = R.drawable.pig),
+                    painter = painterResource(id = imageResId),
                     contentDescription = "Pet",
                     modifier = Modifier.size(300.dp)
                 )
@@ -141,7 +164,7 @@ fun HomeScreen(viewModel: PetViewModel,
                     horizontalArrangement = Arrangement.SpaceEvenly){
 
                     Button(onClick = {showFoodDialog = true},
-                        enabled = !isDead,
+                        enabled = !isDead||pet.isSleeping,
                         modifier = Modifier.width(110.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = ButtonColor,
@@ -155,7 +178,7 @@ fun HomeScreen(viewModel: PetViewModel,
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    Button(onClick = {viewModel.changeStats(-10,30,-10)},
+                    Button(onClick = {viewModel.toggleSleeping()},
                         enabled = !isDead,
                         modifier = Modifier.width(110.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -171,7 +194,7 @@ fun HomeScreen(viewModel: PetViewModel,
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Button(onClick = {showGameDialog = true},
-                        enabled = !isDead,
+                        enabled = !isDead||pet.isSleeping,
                         modifier = Modifier.width(110.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = ButtonColor,

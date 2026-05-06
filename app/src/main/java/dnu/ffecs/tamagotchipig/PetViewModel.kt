@@ -71,14 +71,25 @@ class PetViewModel(
         val baseDrop = (hours * multiplier).toInt()
         val remainder = delta % (1000 * 60 * 60 * 24)
 
-        return pet.copy(
-            hunger = (pet.hunger - baseDrop).coerceAtLeast(0),
-            energy = (pet.energy - baseDrop).coerceAtLeast(0),
-            happiness = (pet.happiness - baseDrop).coerceAtLeast(0),
-            daysAlive = pet.daysAlive+daysPassed,
-            lastUpdateTime = now, // для хар-к
-            lastDayUpdateTime = now - remainder // для днів
-        )
+        return if (pet.isSleeping) {
+            pet.copy(
+                hunger = (pet.hunger - baseDrop).coerceAtLeast(0),
+                energy = (pet.energy + baseDrop*3).coerceAtMost(100),
+                happiness = (pet.happiness - baseDrop).coerceAtLeast(0),
+                daysAlive = pet.daysAlive + daysPassed,
+                lastUpdateTime = now,
+                lastDayUpdateTime = now - remainder
+            )
+        } else {
+            pet.copy(
+                hunger = (pet.hunger - baseDrop).coerceAtLeast(0),
+                energy = (pet.energy - baseDrop).coerceAtLeast(0),
+                happiness = (pet.happiness - baseDrop).coerceAtLeast(0),
+                daysAlive = pet.daysAlive + daysPassed,
+                lastUpdateTime = now,
+                lastDayUpdateTime = now - remainder
+            )
+        }
     }
 
     // головний цикл
@@ -87,10 +98,18 @@ class PetViewModel(
             while (true) {
                 delay(60000)
 
-                val updated = _pet.value.copy(
-                    hunger = (_pet.value.hunger - 1).coerceAtLeast(0),
-                    energy = (_pet.value.energy - 1).coerceAtLeast(0),
-                    happiness = (_pet.value.happiness - 1).coerceAtLeast(0),
+                val pet = _pet.value
+
+                val updated = pet.copy(
+                    hunger = (pet.hunger - 1).coerceAtLeast(0),
+
+                    energy = if (pet.isSleeping) {
+                        (pet.energy + 2).coerceAtMost(100)
+                    } else {
+                        (pet.energy - 1).coerceAtLeast(0)
+                    },
+
+                    happiness = (pet.happiness - 1).coerceAtLeast(0),
                     lastUpdateTime = System.currentTimeMillis()
                 )
 
@@ -154,7 +173,11 @@ class PetViewModel(
         }
     }
 
-
+    fun toggleSleeping() {
+        updateState {
+            it.copy(isSleeping = !it.isSleeping)
+        }
+    }
 }
 
 class PetViewModelFactory(
