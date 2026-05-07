@@ -185,6 +185,18 @@ class PetViewModel(
         }
     }
 
+    val themeMode = repository.themeFlow.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        ThemeMode.SYSTEM
+    )
+
+    fun setTheme(mode: ThemeMode) {
+        viewModelScope.launch {
+            repository.saveTheme(mode)
+        }
+    }
+
 }
 
 class PetViewModelFactory(

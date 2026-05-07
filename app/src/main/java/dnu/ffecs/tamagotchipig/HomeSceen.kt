@@ -56,7 +56,8 @@ fun HomeScreen(viewModel: PetViewModel,
                goToMathQuiz:()->Unit,
                goToLuckyBox:()->Unit,
                goToGuessNumber:()->Unit,
-               goToTapGame:()->Unit) {
+               goToTapGame:()->Unit,
+               themeMode: ThemeMode) {
 
     var showSettings by remember { mutableStateOf(false) }
     var showFoodDialog by remember { mutableStateOf(false) }
@@ -216,7 +217,8 @@ fun HomeScreen(viewModel: PetViewModel,
             onDismiss = { showSettings = false },
             pet,
             viewModel,
-            gardenViewModel
+            gardenViewModel,
+            themeMode = themeMode,
         )
     }
 

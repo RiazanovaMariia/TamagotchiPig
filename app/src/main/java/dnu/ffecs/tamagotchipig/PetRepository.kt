@@ -35,6 +35,7 @@ class PetRepository(context: Context) {
         val LAST_DAY_TIME = longPreferencesKey("last_day_time")
         val PET_TYPE = stringPreferencesKey("pet_type")
         val IS_SLEEPING = booleanPreferencesKey("is_sleeping")
+        val THEME_MODE = stringPreferencesKey("theme_mode")
     }
 
     val petFlow: Flow<Pet> = dataStore.data
@@ -55,6 +56,25 @@ class PetRepository(context: Context) {
             )
         }
 
+    val themeFlow: Flow<ThemeMode> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) emit(emptyPreferences())
+            else throw exception
+        }
+        .map { prefs ->
+            when (prefs[Keys.THEME_MODE]) {
+                "LIGHT" -> ThemeMode.LIGHT
+                "DARK" -> ThemeMode.DARK
+                else -> ThemeMode.SYSTEM
+            }
+        }
+
+    suspend fun saveTheme(mode: ThemeMode) {
+        dataStore.edit { prefs ->
+            prefs[Keys.THEME_MODE] = mode.name
+        }
+    }
+
     suspend fun savePet(pet: Pet) {
         dataStore.edit { prefs ->
             prefs[Keys.HUNGER] = pet.hunger
@@ -68,3 +88,4 @@ class PetRepository(context: Context) {
         }
     }
 }
+

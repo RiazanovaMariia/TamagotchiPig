@@ -5,17 +5,28 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -27,6 +38,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,26 +53,40 @@ import androidx.navigation3.ui.NavDisplay
 import dnu.ffecs.tamagotchipig.ui.theme.TamagotchiPigTheme
 import dnu.ffecs.tamagotchipig.ui.theme.TextLight
 
+enum class ThemeMode {
+    LIGHT, DARK, SYSTEM
+}
+
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
-            TamagotchiPigTheme {
+            val foodRepository = FoodRepository(applicationContext)
+            val gardenRepository = GardenRepository(applicationContext)
+
+            val gardenViewModel: GardenViewModel = viewModel(
+                factory = GardenViewModelFactory(foodRepository,gardenRepository)
+            )
+
+            val repository = PetRepository(applicationContext)
+
+            val viewModel: PetViewModel = viewModel(
+                factory = PetViewModelFactory(repository)
+            )
+
+            val themeMode by viewModel.themeMode.collectAsState()
+
+            val darkTheme = when (themeMode) {
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+                ThemeMode.SYSTEM -> isSystemInDarkTheme()
+            }
+
+            TamagotchiPigTheme (darkTheme = darkTheme) {
                 val backStack = rememberNavBackStack(HomeRoute)
 
-                val repository = PetRepository(applicationContext)
-                val foodRepository = FoodRepository(applicationContext)
-                val gardenRepository = GardenRepository(applicationContext)
-
-                val viewModel: PetViewModel = viewModel(
-                    factory = PetViewModelFactory(repository)
-                )
-
-                val gardenViewModel: GardenViewModel = viewModel(
-                    factory = GardenViewModelFactory(foodRepository,gardenRepository)
-                )
 
                 fun navigateToGarden() {
                     val route = GardenRoute
@@ -124,6 +152,7 @@ class MainActivity : ComponentActivity() {
                     goToLuckyBox = {navigateToLuckyBox()},
                     goToGuessNumber = {navigateToGuessNumber()},
                     goToTapGame = {navigateToTapGame()},
+                    themeMode
                 )
             }
         }
@@ -139,7 +168,8 @@ fun AppNavigation(backStack: NavBackStack<NavKey>,
                   goToMathQuiz:()->Unit,
                   goToLuckyBox:()->Unit,
                   goToGuessNumber:()->Unit,
-                  goToTapGame:()->Unit){
+                  goToTapGame:()->Unit,
+                  themeMode: ThemeMode){
     NavDisplay(
         backStack = backStack,
         onBack = { if (backStack.size > 1)
@@ -147,7 +177,7 @@ fun AppNavigation(backStack: NavBackStack<NavKey>,
         entryProvider = entryProvider {
             entry<HomeRoute> {
                 HomeScreen(petViewModel, gardenViewModel, navigateToGarden,
-                    goToMathQuiz, goToLuckyBox, goToGuessNumber, goToTapGame)
+                    goToMathQuiz, goToLuckyBox, goToGuessNumber, goToTapGame, themeMode)
             }
             entry<GardenRoute> {
                 GardenScreen(goHome, gardenViewModel)
@@ -173,12 +203,13 @@ fun SettingsDialog(
     onDismiss: () -> Unit,
     pet: Pet,
     viewModel: PetViewModel,
-    gardenViewModel: GardenViewModel
+    gardenViewModel: GardenViewModel,
+    themeMode: ThemeMode
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Settings") },
-        text = { SettingsContent(pet,viewModel, gardenViewModel) },
+        text = { SettingsContent(pet,viewModel, gardenViewModel, themeMode) },
         containerColor = MaterialTheme.colorScheme.surface,
         confirmButton = {
             Button(onClick = onDismiss,
@@ -254,7 +285,10 @@ fun FoodDialog(
 
 
 @Composable
-fun SettingsContent(pet: Pet,viewModel: PetViewModel,gardenViewModel: GardenViewModel){
+fun SettingsContent(pet: Pet,viewModel: PetViewModel,
+                    gardenViewModel: GardenViewModel,
+                    themeMode: ThemeMode)
+{
     var showHelp by remember { mutableStateOf(false) }
     var resetDialog by remember { mutableStateOf(false) }
 
@@ -263,6 +297,13 @@ fun SettingsContent(pet: Pet,viewModel: PetViewModel,gardenViewModel: GardenView
 
     Column (horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.background(MaterialTheme.colorScheme.surface)){
+
+        ThemeSwitcher(
+            selected = themeMode,
+            onSelect = { viewModel.setTheme(it) }
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text("Select your pet")
 
@@ -276,7 +317,7 @@ fun SettingsContent(pet: Pet,viewModel: PetViewModel,gardenViewModel: GardenView
                     MaterialTheme.colorScheme.secondary
                 )
             ) {
-                Text("Pet: $selectedPet", color = TextLight)
+                Text("Pet: $selectedPet", color = MaterialTheme.colorScheme.onPrimary)
                 Spacer(modifier = Modifier.weight(1f))
                 Text("▼")
             }
@@ -478,4 +519,89 @@ fun GameOverDialog(
             }
         }
     )
+}
+
+@Composable
+fun ThemeSwitcher(
+    selected: ThemeMode,
+    onSelect: (ThemeMode) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                MaterialTheme.colorScheme.primary,
+                RoundedCornerShape(20.dp)
+            )
+            .border(
+                2.dp,
+                MaterialTheme.colorScheme.secondary,
+                RoundedCornerShape(20.dp)
+            )
+            .padding(6.dp)
+    ) {
+
+        ThemeIconSegment(
+            icon = Icons.Default.LightMode,
+            selected = selected == ThemeMode.LIGHT,
+            onClick = { onSelect(ThemeMode.LIGHT) },
+            modifier = Modifier.weight(1f)
+        )
+
+        ThemeIconSegment(
+            icon = Icons.Default.Settings, 
+            selected = selected == ThemeMode.SYSTEM,
+            onClick = { onSelect(ThemeMode.SYSTEM) },
+            modifier = Modifier.weight(1f)
+        )
+
+        ThemeIconSegment(
+            icon = Icons.Default.DarkMode,
+            selected = selected == ThemeMode.DARK,
+            onClick = { onSelect(ThemeMode.DARK) },
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+fun ThemeIconSegment(
+    icon: ImageVector,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .height(52.dp)
+            .border(
+                2.dp,
+                if (selected)
+                    MaterialTheme.colorScheme.secondary
+                else
+                    Color.Transparent,
+                RoundedCornerShape(16.dp)
+            )
+            .clip(RoundedCornerShape(16.dp))
+            .background(
+                if (selected)
+                    MaterialTheme.colorScheme.surface
+                else
+                    Color.Transparent
+            )
+            .clickable { onClick() }
+        ,
+
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = if (selected)
+                MaterialTheme.colorScheme.onPrimary
+            else
+                MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.size(26.dp)
+        )
+    }
 }
