@@ -1,10 +1,8 @@
 package dnu.ffecs.tamagotchipig
 
-import android.widget.ImageButton
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,8 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,20 +31,16 @@ import dnu.ffecs.tamagotchipig.ui.theme.ButtonColor
 import dnu.ffecs.tamagotchipig.ui.theme.ButtonDisabled
 import dnu.ffecs.tamagotchipig.ui.theme.ButtonStroke
 import dnu.ffecs.tamagotchipig.ui.theme.ButtonText
-import dnu.ffecs.tamagotchipig.ui.theme.DialogColor
 import dnu.ffecs.tamagotchipig.ui.theme.TextDark
 import dnu.ffecs.tamagotchipig.ui.theme.TitleText
-import java.nio.file.WatchEvent
 
 @Composable
-fun GameChooseScreen (viewModel: PetViewModel,
-                      onClose: ()->Unit,
-                      goHome: ()->Unit,
+fun GameChooseScreen (onClose: ()->Unit,
                       goToMathQuiz:()->Unit,
                       goToLuckyBox:()->Unit,
                       goToGuessNumber:()->Unit,
                       goToTapGame:()->Unit) {
-    Column (modifier = Modifier.background(color = ButtonColor).padding(vertical = 10.dp, horizontal = 15.dp),
+    Column (modifier = Modifier.background(MaterialTheme.colorScheme.surface).padding(vertical = 10.dp, horizontal = 15.dp),
         horizontalAlignment = Alignment.CenterHorizontally){
 
         Text("Mini-Games", style = TitleText)
@@ -96,17 +89,13 @@ fun GameChooseScreen (viewModel: PetViewModel,
 
         Spacer(modifier = Modifier.height(25.dp))
 
-        Button(modifier = Modifier.fillMaxWidth().padding(5.dp),
-            onClick = {onClose()},
-            colors = ButtonDefaults.buttonColors(
-                containerColor = ButtonColor,
-                contentColor = TextDark,
-                disabledContainerColor = ButtonDisabled,
-                disabledContentColor = TextDark
-            ),
-            border = BorderStroke(2.dp, ButtonStroke)){
-            Text("Go Home", style = ButtonText)
-        }
+        CustomButton(
+            text = "Go Home",
+            onClick = onClose,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp)
+        )
     }
 }
 

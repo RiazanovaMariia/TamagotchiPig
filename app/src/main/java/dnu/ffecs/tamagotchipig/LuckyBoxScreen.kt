@@ -1,6 +1,5 @@
 package dnu.ffecs.tamagotchipig
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,8 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,16 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import dnu.ffecs.tamagotchipig.ui.theme.ButtonColor
-import dnu.ffecs.tamagotchipig.ui.theme.ButtonStroke
-import dnu.ffecs.tamagotchipig.ui.theme.ButtonText
-import dnu.ffecs.tamagotchipig.ui.theme.TextDark
 import dnu.ffecs.tamagotchipig.ui.theme.TitleText
+import dnu.ffecs.tamagotchipig.ui.theme.UsualText
 
 @Composable
 fun LuckyBoxScreen(
@@ -86,7 +78,7 @@ fun LuckyBoxScreen(
 
                 Spacer(Modifier.height(20.dp))
 
-                Text("Choose any box to check your luck", style = ButtonText)
+                Text("Choose any box to check your luck", style = UsualText)
 
                 Spacer(Modifier.height(75.dp))
 
@@ -149,25 +141,22 @@ fun LuckyBoxScreen(
                 // result
                 if (resultText.isNotEmpty()) {
                     Spacer(Modifier.height(20.dp))
-                    Text(resultText, style = ButtonText,
+                    Text(resultText, style = UsualText,
                         modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
                 }
 
                 Spacer(Modifier.weight(1f))
 
-                Button(
+                CustomButton(
+                    text = "Go Home",
+                    onClick = goHome,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(15.dp),
-                    onClick = goHome,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ButtonColor,
-                        contentColor = TextDark
-                    ),
-                    border = BorderStroke(2.dp, ButtonStroke)
-                ) {
-                    Text("Go Home", style = ButtonText)
-                }
+                        .padding(horizontal = 15.dp)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
             }
         }
     }
@@ -227,6 +216,6 @@ fun LuckyBox(
         }
 
         Spacer(Modifier.height(6.dp))
-        Text(text, style = ButtonText)
+        Text(text, style = UsualText)
     }
 }

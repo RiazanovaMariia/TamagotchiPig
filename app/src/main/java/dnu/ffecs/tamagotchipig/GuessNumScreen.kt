@@ -1,6 +1,5 @@
 package dnu.ffecs.tamagotchipig
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,8 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -28,14 +26,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import dnu.ffecs.tamagotchipig.ui.theme.ButtonColor
-import dnu.ffecs.tamagotchipig.ui.theme.ButtonStroke
-import dnu.ffecs.tamagotchipig.ui.theme.ButtonText
 import dnu.ffecs.tamagotchipig.ui.theme.TextDark
 import dnu.ffecs.tamagotchipig.ui.theme.TitleText
+import dnu.ffecs.tamagotchipig.ui.theme.UsualText
 
 @Composable
 fun GuessNumScreen(
@@ -66,13 +63,13 @@ fun GuessNumScreen(
     fun checkAnswer() {
         val number = userInput.toIntOrNull()
 
-        // ❌ не число
+        // не число
         if (number == null) {
             errorText = "Enter a valid number"
             return
         }
 
-        // ❌ вне диапазона
+        // за діапазоном
         if (number !in 0..100) {
             errorText = "Number must be between 0 and 100"
             return
@@ -157,12 +154,12 @@ fun GuessNumScreen(
 
                 Spacer(Modifier.height(20.dp))
 
-                Text("Guess a number from 0 to 100", style = ButtonText)
+                Text("Guess a number from 0 to 100", style = UsualText)
 
                 Spacer(Modifier.height(20.dp))
 
 
-                    // ✍️ поле ввода
+                    // поле введення
                     TextField(
                         value = userInput,
                         onValueChange = {
@@ -171,81 +168,74 @@ fun GuessNumScreen(
                                 errorText = ""
                             }
                         },
-                        label = { Text("Enter number") },
+                        label = { Text("Enter number", color = TextDark) },
+                        textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimary),
                         isError = errorText.isNotEmpty(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         colors = TextFieldDefaults.colors(
-                            focusedContainerColor = ButtonColor,
-                            unfocusedContainerColor = ButtonColor,
-                            focusedIndicatorColor = ButtonStroke,
-                            unfocusedIndicatorColor = ButtonStroke,
+                            focusedContainerColor = MaterialTheme.colorScheme.primary,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.primary,
+                            focusedIndicatorColor = MaterialTheme.colorScheme.secondary,
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.secondary,
+                            disabledContainerColor = MaterialTheme.colorScheme.tertiary,
+                            disabledTextColor = MaterialTheme.colorScheme.onSecondary,
                             cursorColor = TextDark
                         ),
                         shape = RoundedCornerShape(16.dp),
                         enabled = !finished
                     )
 
-                    // ❌ ошибка
+                    // помилка
                     if (errorText.isNotEmpty()) {
                         Text(
                             text = errorText,
                             color = Color.Red,
-                            style = ButtonText
+                            style = UsualText
                         )
                     }
 
                     Spacer(Modifier.height(10.dp))
 
-                    // 🔘 кнопка Check (в твоём стиле)
-                    Button(
+                    // перевірка
+                    CustomButton(
+                        text = "Check",
                         onClick = { checkAnswer() },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = ButtonColor,
-                            contentColor = TextDark
-                        ),
-                        border = BorderStroke(2.dp, ButtonStroke),
                         enabled = !finished
-                    ) {
-                        Text("Check", style = ButtonText)
-                    }
+                    )
 
                     Spacer(Modifier.height(15.dp))
 
-                    // 🔍 подсказка
+                    // підказка
                     if (hint.isNotEmpty()) {
-                        Text(text = hint, style = ButtonText)
+                        Text(text = hint, style = UsualText)
                     }
 
                     Spacer(Modifier.height(10.dp))
 
-                    Text("Attempts: $attempts / $maxAttempts", style = ButtonText)
+                    Text("Attempts: $attempts / $maxAttempts", style = UsualText)
 
                     Spacer(Modifier.height(20.dp))
 
-                    // 📊 результат
+                    // результат
                     Text(
                         text = resultText,
-                        style = ButtonText,
+                        style = UsualText,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
 
                 Spacer(Modifier.weight(1f))
 
-                // ❌ выход (у тебя уже был идеальный стиль 👍)
-                Button(
+                // вихід
+                CustomButton(
+                    text = "Go Home",
+                    onClick = goHome,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(15.dp),
-                    onClick = goHome,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ButtonColor,
-                        contentColor = TextDark
-                    ),
-                    border = BorderStroke(2.dp, ButtonStroke)
-                ) {
-                    Text("Go Home", style = ButtonText)
-                }
+                        .padding(horizontal = 15.dp)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }

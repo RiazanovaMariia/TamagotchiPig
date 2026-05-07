@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,6 +48,7 @@ import dnu.ffecs.tamagotchipig.ui.theme.LightText
 import dnu.ffecs.tamagotchipig.ui.theme.TextDark
 import dnu.ffecs.tamagotchipig.ui.theme.TextLight
 import dnu.ffecs.tamagotchipig.ui.theme.TitleText
+import dnu.ffecs.tamagotchipig.ui.theme.UsualText
 import kotlinx.coroutines.delay
 
 @Composable
@@ -96,17 +98,16 @@ fun GardenScreen(goHome: () -> Unit,
 
                 }
 
-                Button(modifier = Modifier.fillMaxWidth().padding(20.dp),
-                    onClick = {goHome()},
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ButtonColor,
-                        contentColor = TextDark,
-                        disabledContainerColor = ButtonDisabled,
-                        disabledContentColor = TextDark
-                    ),
-                    border = BorderStroke(2.dp, ButtonStroke)){
-                    Text("Go Home", style = ButtonText)
-                }
+                CustomButton(
+                    text = "Go Home",
+                    onClick = goHome,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
             }
         }
     }
@@ -143,7 +144,7 @@ fun GardenBed(
 
         Text(
             text = bed.food.title,
-            style = ButtonText
+            style = UsualText
         )
 
         // таймер
@@ -200,17 +201,16 @@ fun GardenBed(
             enabled = enabled,
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = ButtonColor,
-                contentColor = TextDark,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
                 disabledContainerColor = ButtonDisabled,
-                disabledContentColor = TextDark
+                disabledContentColor = MaterialTheme.colorScheme.onPrimary
             ),
-            border = BorderStroke(2.dp, ButtonStroke),
+            border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
         ) {
             Text(buttonText,
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                style = ButtonText
+                textAlign = TextAlign.Center
             )
         }
     }

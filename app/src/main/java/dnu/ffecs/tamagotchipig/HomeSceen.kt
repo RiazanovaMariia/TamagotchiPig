@@ -1,5 +1,6 @@
 package dnu.ffecs.tamagotchipig
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.BorderStroke
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,21 +38,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
-import dnu.ffecs.tamagotchipig.ui.theme.ButtonColor
 import dnu.ffecs.tamagotchipig.ui.theme.ButtonDisabled
-import dnu.ffecs.tamagotchipig.ui.theme.ButtonStroke
 import dnu.ffecs.tamagotchipig.ui.theme.ButtonText
 import dnu.ffecs.tamagotchipig.ui.theme.Energy
 import dnu.ffecs.tamagotchipig.ui.theme.Happiness
 import dnu.ffecs.tamagotchipig.ui.theme.Hunger
-import dnu.ffecs.tamagotchipig.ui.theme.TextDark
 import dnu.ffecs.tamagotchipig.ui.theme.TitleText
+import dnu.ffecs.tamagotchipig.ui.theme.UsualText
 
+@SuppressLint("LocalContextResourcesRead")
 @Composable
 fun HomeScreen(viewModel: PetViewModel,
                gardenViewModel: GardenViewModel,
@@ -58,8 +56,7 @@ fun HomeScreen(viewModel: PetViewModel,
                goToMathQuiz:()->Unit,
                goToLuckyBox:()->Unit,
                goToGuessNumber:()->Unit,
-               goToTapGame:()->Unit,
-               goHome:()->Unit) {
+               goToTapGame:()->Unit) {
 
     var showSettings by remember { mutableStateOf(false) }
     var showFoodDialog by remember { mutableStateOf(false) }
@@ -125,7 +122,7 @@ fun HomeScreen(viewModel: PetViewModel,
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Text("Days alive: ${pet.daysAlive}", style = ButtonText)
+                Text("Days alive: ${pet.daysAlive}", style = UsualText)
 
                 Spacer(modifier = Modifier.height(100.dp))
 
@@ -159,76 +156,55 @@ fun HomeScreen(viewModel: PetViewModel,
                 Spacer(modifier = Modifier.weight(1f))
 
                 // Кнопки змін хар-к
-                Row (modifier = Modifier.fillMaxWidth().padding(15.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly){
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(15.dp),
 
-                    Button(onClick = {showFoodDialog = true},
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+
+                    CustomButton(
+                        text = stringResource(R.string.feed),
+                        onClick = { showFoodDialog = true },
                         enabled = !isDead && !pet.isSleeping,
-                        modifier = Modifier.width(110.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = ButtonColor,
-                            contentColor = TextDark,
-                            disabledContainerColor = ButtonDisabled,
-                            disabledContentColor = TextDark
-                        ),
-                        border = BorderStroke(2.dp, ButtonStroke),){
-                        Text(stringResource(R.string.feed),style = ButtonText)
-                    }
+                        modifier = Modifier.width(110.dp)
+                    )
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    Button(onClick = {viewModel.toggleSleeping()},
+                    CustomButton(
+                        text = stringResource(R.string.sleep),
+                        onClick = { viewModel.toggleSleeping() },
                         enabled = !isDead,
-                        modifier = Modifier.width(110.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = ButtonColor,
-                            contentColor = TextDark,
-                            disabledContainerColor = ButtonDisabled,
-                            disabledContentColor = TextDark
-                        ),
-                        border = BorderStroke(2.dp, ButtonStroke),) {
-                        Text(stringResource(R.string.sleep),style = ButtonText)
-                    }
+                        modifier = Modifier.width(110.dp)
+                    )
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    Button(onClick = {showGameDialog = true},
+                    CustomButton(
+                        text = stringResource(R.string.play),
+                        onClick = { showGameDialog = true },
                         enabled = !isDead && !pet.isSleeping,
-                        modifier = Modifier.width(110.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = ButtonColor,
-                            contentColor = TextDark,
-                            disabledContainerColor = ButtonDisabled,
-                            disabledContentColor = TextDark
-                        ),
-                        border = BorderStroke(2.dp, ButtonStroke),) {
-                        Text(stringResource(R.string.play),style = ButtonText)
-                    }
+                        modifier = Modifier.width(110.dp)
+                    )
                 }
 
-                Button(onClick = { showSettings = true },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ButtonColor,
-                        contentColor = TextDark,
-                        disabledContainerColor = ButtonDisabled,
-                        disabledContentColor = TextDark
-                    ),
-                    border = BorderStroke(2.dp, ButtonStroke),) {
-                    Text("Settings",style = ButtonText)
-                }
+                CustomButton(
+                    text = "Settings",
+                    onClick = { showSettings = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp)
+                )
 
-                Button(modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
-                    onClick = {navigateToGarden()},
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ButtonColor,
-                        contentColor = TextDark,
-                        disabledContainerColor = ButtonDisabled,
-                        disabledContentColor = TextDark
-                    ),
-                    border = BorderStroke(2.dp, ButtonStroke),) {
-                    Text("Go to Garden",style = ButtonText)
-                }
+                CustomButton(
+                    text = "Go to Garden",
+                    onClick = navigateToGarden,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp)
+                )
 
                 Spacer(modifier = Modifier.height(20.dp))
             }
@@ -258,9 +234,7 @@ fun HomeScreen(viewModel: PetViewModel,
                 shape = RoundedCornerShape(16.dp),
             ) {
                 GameChooseScreen(
-                    viewModel = viewModel,
                     onClose = { showGameDialog = false},
-                    goHome = goHome,
                     goToMathQuiz = goToMathQuiz,
                     goToLuckyBox = goToLuckyBox,
                     goToGuessNumber = goToGuessNumber,
@@ -281,7 +255,7 @@ fun StatBar(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Text("$icon $value", style = ButtonText)
+        Text("$icon $value", style = UsualText)
 
         Spacer(Modifier.height(4.dp))
 
@@ -305,5 +279,35 @@ fun StatBar(
                     .background(color)
             )
         }
+    }
+}
+
+@Composable
+fun CustomButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    Button(
+        onClick = onClick,
+
+        enabled = enabled,
+
+        modifier = modifier,
+
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = ButtonDisabled,
+            disabledContentColor = MaterialTheme.colorScheme.onPrimary
+        ),
+
+        border = BorderStroke(
+            2.dp,
+            MaterialTheme.colorScheme.secondary
+        )
+    ) {
+        Text(text, style = ButtonText)
     }
 }

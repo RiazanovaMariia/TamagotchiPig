@@ -1,33 +1,23 @@
 package dnu.ffecs.tamagotchipig
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,14 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
@@ -52,10 +37,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import dnu.ffecs.tamagotchipig.ui.theme.TamagotchiPigTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlin.text.set
+import dnu.ffecs.tamagotchipig.ui.theme.TextLight
 
 class MainActivity : ComponentActivity() {
 
@@ -165,7 +147,7 @@ fun AppNavigation(backStack: NavBackStack<NavKey>,
         entryProvider = entryProvider {
             entry<HomeRoute> {
                 HomeScreen(petViewModel, gardenViewModel, navigateToGarden,
-                    goToMathQuiz, goToLuckyBox, goToGuessNumber, goToTapGame, goHome)
+                    goToMathQuiz, goToLuckyBox, goToGuessNumber, goToTapGame)
             }
             entry<GardenRoute> {
                 GardenScreen(goHome, gardenViewModel)
@@ -197,8 +179,13 @@ fun SettingsDialog(
         onDismissRequest = onDismiss,
         title = { Text("Settings") },
         text = { SettingsContent(pet,viewModel, gardenViewModel) },
+        containerColor = MaterialTheme.colorScheme.surface,
         confirmButton = {
-            Button(onClick = onDismiss) {
+            Button(onClick = onDismiss,
+                border = BorderStroke(
+                    2.dp,
+                    MaterialTheme.colorScheme.secondary
+                )) {
                 Text("Close")
             }
         }
@@ -216,6 +203,7 @@ fun FoodDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Choose food") },
+        containerColor = MaterialTheme.colorScheme.surface,
         text = {
             Column {
 
@@ -238,7 +226,11 @@ fun FoodDialog(
                                 }
                             },
                             modifier = Modifier.fillMaxWidth(),
-                            enabled = item.amount > 0
+                            enabled = item.amount > 0,
+                            border = BorderStroke(
+                                2.dp,
+                                MaterialTheme.colorScheme.secondary
+                            )
                         ) {
                             Text("${food.title} (${item.amount}) - +${food.hungerRestore}")
                         }
@@ -249,7 +241,11 @@ fun FoodDialog(
             }
         },
         confirmButton = {
-            Button(onClick = onDismiss) {
+            Button(onClick = onDismiss,
+                border = BorderStroke(
+                    2.dp,
+                    MaterialTheme.colorScheme.secondary
+                )) {
                 Text("Close")
             }
         }
@@ -265,7 +261,8 @@ fun SettingsContent(pet: Pet,viewModel: PetViewModel,gardenViewModel: GardenView
     var expanded by remember { mutableStateOf(false) }
     var selectedPet by remember { mutableStateOf(pet.petType) }
 
-    Column (horizontalAlignment = Alignment.CenterHorizontally){
+    Column (horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.background(MaterialTheme.colorScheme.surface)){
 
         Text("Select your pet")
 
@@ -273,9 +270,13 @@ fun SettingsContent(pet: Pet,viewModel: PetViewModel,gardenViewModel: GardenView
 
             OutlinedButton(
                 onClick = { expanded = true },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                border = BorderStroke(
+                    2.dp,
+                    MaterialTheme.colorScheme.secondary
+                )
             ) {
-                Text("Pet: $selectedPet")
+                Text("Pet: $selectedPet", color = TextLight)
                 Spacer(modifier = Modifier.weight(1f))
                 Text("▼")
             }
@@ -283,7 +284,8 @@ fun SettingsContent(pet: Pet,viewModel: PetViewModel,gardenViewModel: GardenView
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.width(275.dp),
+                containerColor = MaterialTheme.colorScheme.secondary
             ) {
 
                 DropdownMenuItem(
@@ -317,7 +319,11 @@ fun SettingsContent(pet: Pet,viewModel: PetViewModel,gardenViewModel: GardenView
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Button(onClick = {showHelp=true}, modifier = Modifier.fillMaxWidth()){
+        Button(onClick = {showHelp=true}, modifier = Modifier.fillMaxWidth(),
+            border = BorderStroke(
+                2.dp,
+                MaterialTheme.colorScheme.secondary
+            )){
             Text("Help me!")
         }
 
@@ -327,7 +333,11 @@ fun SettingsContent(pet: Pet,viewModel: PetViewModel,gardenViewModel: GardenView
             onClick = {
                 resetDialog = true
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            border = BorderStroke(
+                2.dp,
+                MaterialTheme.colorScheme.secondary
+            )
         ) {
             Text("Reset your progress")
         }
@@ -358,11 +368,16 @@ fun ResetDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Reset game") },
+        containerColor = MaterialTheme.colorScheme.surface,
         text = {
             Text("Are you sure you want to reset your progress?")
         },
         confirmButton = {
-            Button(onClick = onDismiss) {
+            Button(onClick = onDismiss,
+                border = BorderStroke(
+                    2.dp,
+                    MaterialTheme.colorScheme.secondary
+                )) {
                 Text("Close")
             }
         },
@@ -370,7 +385,11 @@ fun ResetDialog(
             Button(onClick = {
                 onConfirm()
                 onDismiss()
-            }) {
+            },
+                border = BorderStroke(
+                    2.dp,
+                    MaterialTheme.colorScheme.secondary
+                )) {
                 Text("Reset")
             }
         }
@@ -383,11 +402,16 @@ fun InstructionsDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surface,
         text = {
             HelpContent()
                },
         confirmButton = {
-            Button(onClick = onDismiss) {
+            Button(onClick = onDismiss,
+                border = BorderStroke(
+                    2.dp,
+                    MaterialTheme.colorScheme.secondary
+                )) {
                 Text("Close")
             }
         }
@@ -400,6 +424,7 @@ fun HelpContent() {
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
 
         Text(
@@ -442,8 +467,13 @@ fun GameOverDialog(
         onDismissRequest = {}, //неможливо закрити
         title = { Text("Game Over") },
         text = { Text("Your pet has died...") },
+        containerColor = MaterialTheme.colorScheme.surface,
         confirmButton = {
-            Button(onClick = onReset) {
+            Button(onClick = onReset,
+                border = BorderStroke(
+                    2.dp,
+                    MaterialTheme.colorScheme.secondary
+                )) {
                 Text("Restart")
             }
         }

@@ -5,9 +5,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.graphics.Color
 
-// Set of Material typography styles to start with
+
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -24,6 +23,11 @@ val TitleText = TextStyle(
 )
 
 val ButtonText = TextStyle(
+    fontSize = 20.sp,
+    fontWeight = FontWeight.SemiBold
+)
+
+val UsualText = TextStyle(
     fontSize = 20.sp,
     fontWeight = FontWeight.SemiBold,
     color = TextDark

@@ -14,10 +14,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -27,12 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import dnu.ffecs.tamagotchipig.ui.theme.ButtonColor
-import dnu.ffecs.tamagotchipig.ui.theme.ButtonDisabled
-import dnu.ffecs.tamagotchipig.ui.theme.ButtonStroke
 import dnu.ffecs.tamagotchipig.ui.theme.ButtonText
-import dnu.ffecs.tamagotchipig.ui.theme.TextDark
 import dnu.ffecs.tamagotchipig.ui.theme.TitleText
+import dnu.ffecs.tamagotchipig.ui.theme.UsualText
 
 @Composable
 fun MathQuizScreen(
@@ -40,11 +37,11 @@ fun MathQuizScreen(
     goHome: () -> Unit
 ) {
 
-    var currentIndex by remember { mutableStateOf(0) }
-    var correctCount by remember { mutableStateOf(0) }
+    var currentIndex by remember { mutableIntStateOf(0) }
+    var correctCount by remember { mutableIntStateOf(0) }
 
     var question by remember { mutableStateOf("") }
-    var correctAnswer by remember { mutableStateOf(0) }
+    var correctAnswer by remember { mutableIntStateOf(0) }
     var options by remember { mutableStateOf(listOf<Int>()) }
 
     var selectedAnswer by remember { mutableStateOf<Int?>(null) }
@@ -150,7 +147,7 @@ fun MathQuizScreen(
 
                 Spacer(Modifier.height(40.dp))
 
-                Text("Question ${currentIndex + 1} / 5", style = ButtonText)
+                Text("Question ${currentIndex + 1} / 5", style = UsualText)
 
                 Spacer(Modifier.height(50.dp))
 
@@ -158,7 +155,7 @@ fun MathQuizScreen(
 
                     Text(
                         text = question,
-                        style = ButtonText
+                        style = UsualText
                     )
 
                     Spacer(Modifier.height(20.dp))
@@ -170,8 +167,8 @@ fun MathQuizScreen(
 
                         val color = when {
                             showResult && isCorrect -> Color(0xFF4CAF50)
-                            showResult && isSelected && !isCorrect -> Color(0xFFF44336)
-                            else -> ButtonColor
+                            showResult && isSelected -> Color(0xFFF44336)
+                            else -> MaterialTheme.colorScheme.primary
                         }
 
                         Button(
@@ -182,7 +179,7 @@ fun MathQuizScreen(
                                 .fillMaxWidth()
                                 .padding(vertical = 5.dp, horizontal = 15.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = color),
-                            border = BorderStroke(2.dp, ButtonStroke)){
+                            border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary)){
                             Text(option.toString(), style = ButtonText)
                         }
                     }
@@ -190,46 +187,40 @@ fun MathQuizScreen(
                     Spacer(Modifier.height(20.dp))
 
                     if (showResult) {
-                        Button(onClick = { continueGame() },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = ButtonColor,
-                                contentColor = TextDark
-                            ), border = BorderStroke(2.dp, ButtonStroke)) {
-                            Text("Next")
-                        }
+                        CustomButton(
+                            text = "Next",
+                            onClick = { continueGame() }
+                        )
                     }
 
                 } else {
 
                     Text(
                         text = "Good Job! 🎉",
-                        style = ButtonText
+                        style = UsualText
                     )
 
                     Spacer(Modifier.height(20.dp))
 
-                    Text("✨ Correct: $correctCount / 5", style = ButtonText)
-                    Text("Add ${correctCount*6} happiness", style = ButtonText)
-                    Text("Decrease 5 hunger and 7 energy", style = ButtonText)
+                    Text("✨ Correct: $correctCount / 5", style = UsualText)
+                    Text("Add ${correctCount*6} happiness", style = UsualText)
+                    Text("Decrease 5 hunger and 7 energy", style = UsualText)
 
                     Spacer(Modifier.height(20.dp))
                 }
 
                 Spacer(Modifier.weight(1f))
 
-                Button(
+                CustomButton(
+                    text = "Go Home",
+                    onClick = goHome,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(15.dp),
-                    onClick = goHome,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ButtonColor,
-                        contentColor = TextDark
-                    ),
-                    border = BorderStroke(2.dp, ButtonStroke)
-                ) {
-                    Text("Go Home", style = ButtonText)
-                }
+                        .padding(horizontal = 15.dp)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
             }
         }
     }
