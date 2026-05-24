@@ -226,6 +226,20 @@ fun GuessNumScreen(
 
                 Spacer(Modifier.weight(1f))
 
+                // рестарт гри
+                if (finished) {
+
+                    CustomButton(
+                        text = "Play Again",
+                        onClick = { startGame() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp)
+                    )
+
+                    Spacer(Modifier.height(10.dp))
+                }
+
                 // вихід
                 CustomButton(
                     text = "Go Home",

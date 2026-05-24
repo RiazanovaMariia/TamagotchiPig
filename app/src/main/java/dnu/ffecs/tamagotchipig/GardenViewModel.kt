@@ -26,7 +26,7 @@ class GardenViewModel(
         startTick()
     }
 
-    // 🌱 загрузка из DataStore
+    // завантаження з DataStore
     private fun observeGarden() {
         viewModelScope.launch {
             gardenRepository.gardenFlow.collect { state ->
@@ -35,7 +35,7 @@ class GardenViewModel(
         }
     }
 
-    // 🌱 стартовое состояние (fallback)
+    // початковий стан
     private fun createInitialGarden(): GardenState {
         val beds = FoodList.foods.map { food ->
             List(3) {
@@ -50,7 +50,7 @@ class GardenViewModel(
         return GardenState(beds)
     }
 
-    // 🌿 посадка
+    // посадка
     fun plant(row: Int, col: Int) {
         updateGarden { state ->
             val newState = state.copy(
@@ -72,7 +72,7 @@ class GardenViewModel(
         }
     }
 
-    // 🌾 сбор
+    // збір
     fun harvest(row: Int, col: Int) {
         val bed = _garden.value.beds[row][col]
         if (!bed.isReady) return
@@ -107,7 +107,7 @@ class GardenViewModel(
         }
     }
 
-    // 💀 reset сада
+    // скидання сада
     fun resetGarden() {
         viewModelScope.launch {
             val fresh = createInitialGarden()
@@ -116,7 +116,7 @@ class GardenViewModel(
         }
     }
 
-    // ⏱ рост растений
+    // ріст рослин
     private fun startTick() {
         viewModelScope.launch {
             while (true) {
@@ -149,7 +149,7 @@ class GardenViewModel(
         }
     }
 
-    // ⏳ время до готовности
+    // час до можливості збору
     fun getTimeLeft(bed: GardenBedState): Long {
         val start = bed.plantedAt ?: return 0L
         val elapsed = System.currentTimeMillis() - start
@@ -163,7 +163,7 @@ class GardenViewModel(
         }
     }
 
-    // 💾 сохранение в DataStore
+    // збереження у DataStore
     private fun save(state: GardenState) {
         viewModelScope.launch {
             gardenRepository.saveGarden(state)

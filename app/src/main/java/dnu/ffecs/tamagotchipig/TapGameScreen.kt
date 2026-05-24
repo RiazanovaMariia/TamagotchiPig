@@ -40,6 +40,13 @@ fun TapGameScreen(
     var isRunning by remember { mutableStateOf(true) }
     var finished by remember { mutableStateOf(false) }
 
+    fun startGame() {
+        clicks = 0
+        timeLeft = 20
+        isRunning = true
+        finished = false
+    }
+
     fun applyResult() {
         val happinessBonus = (clicks / 10) * 3
 
@@ -48,6 +55,10 @@ fun TapGameScreen(
             hungerDelta = -5,
             happinessDelta = happinessBonus
         )
+    }
+
+    LaunchedEffect(Unit) {
+        startGame()
     }
 
     // таймер
@@ -145,6 +156,20 @@ fun TapGameScreen(
                 }
 
                 Spacer(Modifier.weight(1f))
+
+                // рестарт гри
+                if (finished) {
+
+                    CustomButton(
+                        text = "Play Again",
+                        onClick = { startGame() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp)
+                    )
+
+                    Spacer(Modifier.height(10.dp))
+                }
 
                 // вихід
                 CustomButton(

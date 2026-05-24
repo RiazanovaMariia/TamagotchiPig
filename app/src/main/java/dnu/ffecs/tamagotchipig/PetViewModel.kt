@@ -100,16 +100,29 @@ class PetViewModel(
 
                 val pet = _pet.value
 
+                val emptyBars = listOf(
+                    pet.hunger,
+                    pet.energy,
+                    pet.happiness
+                ).count { it <= 0 }
+
+                val multiplier = when (emptyBars) {
+                    0 -> 1
+                    1 -> 2
+                    2 -> 3
+                    else -> 3
+                }
+
                 val updated = pet.copy(
-                    hunger = (pet.hunger - 1).coerceAtLeast(0),
+                    hunger = (pet.hunger - multiplier).coerceAtLeast(0),
 
                     energy = if (pet.isSleeping) {
                         (pet.energy + 2).coerceAtMost(100)
                     } else {
-                        (pet.energy - 1).coerceAtLeast(0)
+                        (pet.energy - multiplier).coerceAtLeast(0)
                     },
 
-                    happiness = (pet.happiness - 1).coerceAtLeast(0),
+                    happiness = (pet.happiness - multiplier).coerceAtLeast(0),
                     lastUpdateTime = System.currentTimeMillis()
                 )
 

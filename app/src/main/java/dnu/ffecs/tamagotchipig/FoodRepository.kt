@@ -26,7 +26,7 @@ class FoodRepository(context: Context) {
         val INVENTORY = stringPreferencesKey("inventory")
     }
 
-    // 📥 читаем инвентарь
+    // читання інвентаря
     val inventoryFlow: Flow<List<FoodInventoryItem>> = dataStore.data
         .catch { exception ->
             if (exception is IOException) emit(emptyPreferences())
@@ -37,7 +37,7 @@ class FoodRepository(context: Context) {
             parseInventory(json)
         }
 
-    // ➕ добавить еду
+    // додання їжі
     suspend fun addFood(food: Food) {
         dataStore.edit { prefs ->
             val current = parseInventory(prefs[Keys.INVENTORY] ?: "[]").toMutableList()
@@ -82,7 +82,7 @@ class FoodRepository(context: Context) {
         }
     }
 
-    // 🔄 JSON → List
+    // JSON → List
     private fun parseInventory(json: String): List<FoodInventoryItem> {
         val array = JSONArray(json)
         val list = mutableListOf<FoodInventoryItem>()
@@ -99,7 +99,7 @@ class FoodRepository(context: Context) {
         return list
     }
 
-    // 🔄 List → JSON
+    // List → JSON
     private fun toJson(list: List<FoodInventoryItem>): String {
         val array = JSONArray()
 

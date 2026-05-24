@@ -42,7 +42,7 @@ class GardenRepository(context: Context) {
         }
     }
 
-    // 🌱 CREATE INITIAL
+    // CREATE INITIAL
     private fun createInitialGarden(): GardenState {
         val beds = FoodList.foods.map { food ->
             List(3) {
@@ -57,7 +57,7 @@ class GardenRepository(context: Context) {
         return GardenState(beds)
     }
 
-    // 🔄 PARSE JSON
+    // PARSE JSON
     private fun parseGarden(json: String): GardenState {
         val array = org.json.JSONArray(json)
 
@@ -83,7 +83,7 @@ class GardenRepository(context: Context) {
         return GardenState(beds.chunked(3))
     }
 
-    // 💾 TO JSON
+    // TO JSON
     private fun toJson(state: GardenState): String {
         val array = org.json.JSONArray()
 
